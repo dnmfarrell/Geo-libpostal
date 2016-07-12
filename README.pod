@@ -1,0 +1,19 @@
+=encoding utf8
+
+=head1 NAME
+
+Geo::libpostal - Perl bindings for libpostal
+
+=head1 DESCRIPTION
+
+This is a embryonic stage release - no useful functions exposed yet. Do not use.
+
+=head1 AUTHOR
+
+E<copy> 2016 David Farrell
+
+=head1 LICENSE
+
+See LICENSE
+
+=cut
