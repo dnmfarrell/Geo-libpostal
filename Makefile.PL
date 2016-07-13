@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME           => 'Geo::libpostal',
     VERSION_FROM   => 'lib/Geo/libpostal.pm',
-    PREREQ_PM      => { 'Test::More' => 0, 'Exporter' => '5.57' },
+    PREREQ_PM      => { 'Test::More' => 0, 'Exporter' => '5.57', 'Test::Fatal' => 0 },
     ABSTRACT_FROM  => 'lib/Geo/libpostal.pm',
     AUTHOR         => 'David Farrell',
     LIBS           => ['-lpostal'],
