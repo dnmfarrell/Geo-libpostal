@@ -68,6 +68,9 @@ C<country> - 2 character country code per L<ISO 3166-1 alpha-2|https://en.wikipe
 Will C<die> on C<undef> and empty addresses, odd numbers of options and
 unrecognized options. Exported on request.
 
+C<parse_address()> may return L<duplicate labels|https://github.com/openvenues/libpostal/issues/27> for invalid addresses
+strings.
+
 =head1 WARNING
 
 libpostal uses C<setup()> and C<teardown()> functions. Setup is lazily
