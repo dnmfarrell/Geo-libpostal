@@ -87,4 +87,12 @@ subtest exceptions => sub {
   ok exception { parse_address('foo', sub{}, 'dah')  }, 'parse_address() option name invalid (type CV)';
   ok exception { parse_address('foo', \my $v,'dah')  }, 'parse_address() option name invalid (type RV)';
 };
+
+subtest teardown => sub {
+  ok !defined Geo::libpostal::_teardown, '_teardown()';
+  ok !defined Geo::libpostal::_teardown, '_teardown() twice doesn\'t error';
+  ok exception { parse_address('120 E 96th St New York') } , 'parse address dies after _teardown()';
+  ok exception { expand_address('120 E 96th St New York') }, 'expand address dies after _teardown()';
+};
+
 done_testing();

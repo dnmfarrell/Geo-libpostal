@@ -7,23 +7,28 @@
 #include <stdlib.h>
 #include <libpostal/libpostal.h>
 
+int LP_SETUP = 0,
+    LP_SETUP_LANGCLASS = 0,
+    LP_SETUP_PARSER = 0;
+
 MODULE = Geo::libpostal      PACKAGE = Geo::libpostal PREFIX = lp_
 PROTOTYPES: ENABLED
 
 SV *
-lp_setup()
+lp__teardown()
   CODE:
-  if (!libpostal_setup() || !libpostal_setup_language_classifier() || !libpostal_setup_parser()) {
-    croak("libpostal setup failed: %s", EXIT_FAILURE);
+  if (LP_SETUP == 1) {
+    libpostal_teardown();
+    LP_SETUP = -1;
   }
-  ST(0) = sv_newmortal();
-
-SV *
-lp_teardown()
-  CODE:
-  libpostal_teardown();
-  libpostal_teardown_language_classifier();
-  libpostal_teardown_parser();
+  if (LP_SETUP_LANGCLASS == 1) {
+    libpostal_teardown_language_classifier();
+    LP_SETUP_LANGCLASS  = -1;
+  }
+  if (LP_SETUP_PARSER == 1) {
+    libpostal_teardown_parser();
+    LP_SETUP_PARSER  = -1;
+  }
   ST(0) = sv_newmortal();
 
 void
@@ -32,6 +37,23 @@ lp_expand_address(SV *address)
     char *src;
     size_t len;
   PPCODE:
+    if (!LP_SETUP) {
+      if (!libpostal_setup()) {
+        croak("libpostal_setup() failed: %d", EXIT_FAILURE);
+      }
+      LP_SETUP = 1;
+    }
+    else if (LP_SETUP == -1) {
+      croak("_teardown() already called, Geo::libpostal cannot be used");
+    }
+
+    if (!LP_SETUP_LANGCLASS) {
+      if(!libpostal_setup_language_classifier()) {
+        croak("libpostal_setup_language_classifier failed: %d", EXIT_FAILURE);
+      }
+      LP_SETUP_LANGCLASS = 1;
+    }
+
     /* call fetch() if a tied variable to populate the sv */
     SvGETMAGIC(address);
 
@@ -64,8 +86,24 @@ lp_parse_address(address, ...)
   PREINIT:
     char *src, *option_name, *language, *country;
     size_t address_len, option_len, language_len, country_len, i;
-
   PPCODE:
+    if (!LP_SETUP) {
+      if (!libpostal_setup()) {
+        croak("libpostal_setup() failed: %d", EXIT_FAILURE);
+      }
+      LP_SETUP = 1;
+    }
+    else if (LP_SETUP == -1) {
+      croak("_teardown() already called, Geo::libpostal cannot be used");
+    }
+
+    if (!LP_SETUP_PARSER) {
+      if(!libpostal_setup_parser()) {
+        croak("libpostal_setup_parser() failed: %d", EXIT_FAILURE);
+      }
+      LP_SETUP_PARSER = 1;
+    }
+
     /* call fetch() if a tied variable to populate the sv */
     SvGETMAGIC(address);
 

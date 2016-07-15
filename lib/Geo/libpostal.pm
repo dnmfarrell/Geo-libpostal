@@ -4,17 +4,14 @@ use warnings;
 use XSLoader;
 use Exporter 5.57 'import';
 
-our $VERSION     = '0.02';
+our $VERSION     = '0.03';
 our %EXPORT_TAGS = ( 'all' => ['expand_address', 'parse_address'] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
 
 XSLoader::load('Geo::libpostal', $VERSION);
 
-# setup libpostal
-Geo::libpostal::setup();
-
 # cleanup libpostal
-END { Geo::libpostal::teardown() }
+END { _teardown() }
 
 1;
 
@@ -91,13 +88,28 @@ unrecognized options. Exported on request.
 
 =head1 WARNING
 
-libpostal uses C<setup()> and C<teardown()> functions - you may see delays in
-start and end of your program due to this. Setup fires as soon as this module
-is imported. Teardown occurs in an C<END> block automatically.
+libpostal uses C<setup()> and C<teardown()> functions. Setup is lazily
+loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal>
+will C<die> if C<expand_address> or C<parse_address> is called after teardown.
 
 =head1 EXTERNAL DEPENDENCIES
 
 L<libpostal|https://github.com/openvenues/libpostal> is required.
+
+=head1 INSTALLATION
+
+You can install this module with CPAN:
+
+  $ cpan Geo::libpostal
+
+Or clone it from GitHub and install it manually:
+
+  $ git clone https://github.com/dnmfarrell/Geo-libpostal
+  $ cd Geo-libpostal
+  $ perl Makefile.PL
+  $ make
+  $ make test
+  $ make install
 
 =head1 AUTHOR
 
