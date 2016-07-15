@@ -4,7 +4,7 @@ use warnings;
 use XSLoader;
 use Exporter 5.57 'import';
 
-our $VERSION     = '0.03';
+our $VERSION     = '0.04';
 our %EXPORT_TAGS = ( 'all' => ['expand_address', 'parse_address'] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
 
@@ -44,14 +44,7 @@ Geo::libpostal - Perl bindings for libpostal
 
 =head1 DESCRIPTION
 
-libpostal is a C library for parsing/normalizing international street addresses.
-
-Address strings can be normalized using C<expand_address> which returns a list
-of valid variations so you can check for duplicates in your dataset. It
-supports normalization in over L<60 languages|https://github.com/openvenues/libpostal/tree/master/resources/dictionaries>.
-
-An address string can also be parsed into its constituent parts using
-C<parse_address> such as house name, number, city and postcode.
+libpostal is a C library for parsing/normalizing international street addresses. Address strings can be normalized using C<expand_address> which returns a list of valid variations so you can check for duplicates in your dataset. It supports normalization in over L<60 languages|https://github.com/openvenues/libpostal/tree/master/resources/dictionaries>. An address string can also be parsed into its constituent parts using C<parse_address> such as house name, number, city and postcode.
 
 =head1 FUNCTIONS
 
@@ -86,9 +79,7 @@ normalization. Accepts many boolean options:
       roman_numerals => 1,
   );
 
-B<Warning>: libpostal L<segfaults|https://github.com/openvenues/libpostal/issues/79> if all options are set to false.
-
-Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>:
+B<Warning>: libpostal L<segfaults|https://github.com/openvenues/libpostal/issues/79> if all options are set to false. Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>:
 
  expand_address('120 E 96th St New York', languages => [qw(en fr)]);
 
@@ -103,6 +94,8 @@ unrecognized options. Exported on request.
 
   my %ny_address = parse_address('120 E 96th St New York');
   my %fr_address = parse_address('Quatre vingt douze R. de l\'Église');
+
+=cut
 
 #################################################
 # options are ignored by libpostal
@@ -128,6 +121,8 @@ unrecognized options. Exported on request.
 # Will C<die> on C<undef> and empty addresses, odd numbers of options and
 # unrecognized options. Exported on request.
 
+=pod
+
 Will C<die> on C<undef> and empty addresses. Exported on request.
 
 C<parse_address()> may return L<duplicate labels|https://github.com/openvenues/libpostal/issues/27> for invalid addresses
@@ -135,9 +130,7 @@ strings.
 
 =head1 WARNING
 
-libpostal uses C<setup()> and C<teardown()> functions. Setup is lazily
-loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal>
-will C<die> if C<expand_address> or C<parse_address> is called after teardown.
+libpostal uses C<setup()> and C<teardown()> functions. Setup is lazily loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal> will C<die> if C<expand_address> or C<parse_address> is called after teardown.
 
 =head1 EXTERNAL DEPENDENCIES
 
