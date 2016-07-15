@@ -6,6 +6,7 @@ WriteMakefile(
     PREREQ_PM      => { 'Test::More' => 0, 'Exporter' => '5.57', 'Test::Fatal' => 0 },
     ABSTRACT_FROM  => 'lib/Geo/libpostal.pm',
     AUTHOR         => 'David Farrell',
+    CCFLAGS        => '-Wall',
     LIBS           => ['-lpostal'],
     OPTIMIZE       => '-O3',
     DEFINE         => '',
