@@ -113,6 +113,10 @@ subtest expand_address => sub {
     components => $ADDRESS_ADMIN1 | $ADDRESS_ADMIN2 | $ADDRESS_ADMIN3 | $ADDRESS_ADMIN4 | $ADDRESS_ADMIN_OTHER
   ),'expand address components (admins)';
 
+  ok expand_address('120 E 96th St New York',
+    components => 1 << 32 # too big
+  ),'expand address components (32bit)';
+
   # tests for languages
   ok expand_address('120 E 96th St New York', languages => [qw(en fr)]), 'expand address language (en, fr)';
   ok expand_address('120 E 96th St New York', languages => ['es']), 'expand address language (es)';
