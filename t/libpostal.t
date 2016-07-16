@@ -12,6 +12,7 @@ subtest expand_address => sub {
   ok expand_address('120 E 96th St New York'), 'expand address';
   ok expand_address('The Book Club 100-106 Leonard St Shoreditch London EC2A 4RH, United Kingdom'), 'expand UK address';
 
+  # test boolean options
   ok expand_address('120 E 96th St New York',
     latin_ascii => 1,
     transliterate => 1,
@@ -38,7 +39,7 @@ subtest expand_address => sub {
     transliterate => 0,
     strip_accents => 0,
     decompose => 0,
-    # lowercase => 0, segfault! https://github.com/openvenues/libpostal/issues/79
+    #lowercase => 0, segfault on older libpostals https://github.com/openvenues/libpostal/issues/79
     trim_string => 0,
     drop_parentheticals => 0,
     replace_numeric_hyphens => 0,
@@ -55,12 +56,69 @@ subtest expand_address => sub {
   ), 'expand address all options false';
 
   ok expand_address('120 E 96th St New York',
+    latin_ascii => undef,
+    transliterate => undef,
+    strip_accents => undef,
+    decompose => undef,
+    #lowercase => undef, segfault on older libpostals https://github.com/openvenues/libpostal/issues/79
+    trim_string => undef,
+    drop_parentheticals => undef,
+    replace_numeric_hyphens => undef,
+    delete_numeric_hyphens => undef,
+    split_alpha_from_numeric => undef,
+    replace_word_hyphens => undef,
+    delete_word_hyphens => undef,
+    delete_final_periods => undef,
+    delete_acronym_periods => undef,
+    drop_english_possessives => undef,
+    delete_apostrophes => undef,
+    expand_numex => undef,
+    roman_numerals => undef,
+  ), 'expand address all options false (undef)';
+
+  ok expand_address('120 E 96th St New York',
     lowercase => 0
   ), 'expand address lowercase false';
+
+  # tests for components
+  ok expand_address('120 E 96th St New York',
+    components => undef
+  ),'expand address components (undef)';
+
+  ok expand_address('120 E 96th St New York',
+    components => 0
+  ),'expand address components (0)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_NAME | $ADDRESS_HOUSE_NUMBER | $ADDRESS_STREET | $ADDRESS_UNIT
+  ),'expand address components (default)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_ALL
+  ),'expand address components (all)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_POSTAL_CODE
+  ),'expand address components (postal_code)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_LOCALITY
+  ),'expand address components (locality)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_NAME | $ADDRESS_HOUSE_NUMBER | $ADDRESS_STREET | $ADDRESS_UNIT | $ADDRESS_POSTAL_CODE | $ADDRESS_COUNTRY
+  ),'expand address components (default plus postal_code, country)';
+
+  ok expand_address('120 E 96th St New York',
+    components => $ADDRESS_ADMIN1 | $ADDRESS_ADMIN2 | $ADDRESS_ADMIN3 | $ADDRESS_ADMIN4 | $ADDRESS_ADMIN_OTHER
+  ),'expand address components (admins)';
+
+  # tests for languages
   ok expand_address('120 E 96th St New York', languages => [qw(en fr)]), 'expand address language (en, fr)';
   ok expand_address('120 E 96th St New York', languages => ['es']), 'expand address language (es)';
 };
 
+# NB these options are ignored by libpostal!
 subtest parse_address => sub {
   ok parse_address('120 E 96th St New York'), 'parse address';
 

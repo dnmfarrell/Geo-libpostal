@@ -62,14 +62,48 @@ normalization. Accepts many boolean options:
       roman_numerals => 1,
   );
 
-B<Warning>: libpostal L<segfaults|https://github.com/openvenues/libpostal/issues/79> if all options are set to false. Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>:
+B<Warning>: old versions of libpostal L<segfault|https://github.com/openvenues/libpostal/issues/79> if all options are set to false.
+
+Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>:
 
  expand_address('120 E 96th St New York', languages => [qw(en fr)]);
 
 This is useful if you are normalizing addresses in multiple languages.
 
-Will C<die> on C<undef> and empty addresses, odd numbers of options and
-unrecognized options. Exported on request.
+Finally C<expand_address> accepts an option for which address C<components> to expand. This a 16bit integer bitmask. These constants are exported with the C<:all> tag:
+
+  $ADDRESS_NONE
+  $ADDRESS_ANY
+  $ADDRESS_NAME
+  $ADDRESS_HOUSE_NUMBER
+  $ADDRESS_STREET
+  $ADDRESS_UNIT
+  $ADDRESS_LOCALITY
+  $ADDRESS_ADMIN1
+  $ADDRESS_ADMIN2
+  $ADDRESS_ADMIN3
+  $ADDRESS_ADMIN4
+  $ADDRESS_ADMIN_OTHER
+  $ADDRESS_COUNTRY
+  $ADDRESS_POSTAL_CODE
+  $ADDRESS_NEIGHBORHOOD
+  $ADDRESS_ALL
+
+These are the default components used by libpostal:
+
+  use Geo::libpostal ':all';
+
+  expand_address('120 E 96th St New York',
+    components => $ADDRESS_NAME | $ADDRESS_HOUSE_NUMBER | $ADDRESS_STREET | $ADDRESS_UNIT
+  );
+
+The constant C<$ADDRESS_ALL> uses all components:
+
+  expand_address('120 E 96th St New York',
+    components => $ADDRESS_ALL
+  );
+
+C<expand_address> will C<die> on C<undef> and empty addresses, odd numbers of options and unrecognized options. Exported on request.
 
 =head2 parse_address
 

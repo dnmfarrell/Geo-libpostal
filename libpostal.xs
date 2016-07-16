@@ -15,7 +15,7 @@ int LP_SETUP = 0,
 MODULE = Geo::libpostal      PACKAGE = Geo::libpostal PREFIX = lp_
 PROTOTYPES: ENABLED
 
-SV *
+void
 lp__teardown()
   CODE:
   /* if teardown is called twice, libpostal crashes */
@@ -31,14 +31,15 @@ lp__teardown()
     libpostal_teardown_parser();
     LP_SETUP_PARSER  = -1;
   }
-  ST(0) = sv_newmortal();
+  EXTEND(SP, 1);
+  PUSHs(sv_newmortal());
 
 void
 lp_expand_address(address, ...)
   SV *address
   PREINIT:
     char *src, *option_name;
-    size_t src_len, option_len, i, j, num_expansions, num_langs, exp_len, lang_len;
+    size_t src_len, option_len, i, j, num_expansions, num_langs, exp_len, lang_len, components;
     AV *languages_av;
     SV **lang;
     char **languages = NULL;
@@ -115,6 +116,17 @@ lp_expand_address(address, ...)
        }
        options.languages = (char **)languages;
        options.num_languages = num_langs;
+      }
+      /* process address_components bitmask */
+      else if (!strncmp("components", option_name, option_len)) {
+        /* only extract the bottom 16bits */
+        if (SvIOK(ST(i+1))) {
+          components = SvIV(ST(i+1));
+          options.address_components = (components >> 0) & 0x1298;
+        }
+        else {
+          options.address_components = 0;
+        }
       }
       /* process boolean options */
       else if (!strncmp("latin_ascii", option_name, option_len)) {
@@ -233,7 +245,9 @@ lp_parse_address(address, ...)
 
     address_parser_options_t options = get_libpostal_address_parser_default_options();
 
-    /* parse optional args */
+    /* parse optional args
+     * N.B. These are ignored by libpostal
+     * */
     if (((items - 1) % 2) != 0)
       croak("Odd number of options in call to parse_address()");
 
