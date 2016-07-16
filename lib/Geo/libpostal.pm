@@ -93,8 +93,7 @@ libpostal is a C library for parsing/normalizing international street addresses.
   my @ny_addresses = expand_address('120 E 96th St New York');
   my @fr_addresses = expand_address('Quatre vingt douze R. de l\'Église');
 
-Takes an address string and returns a list of known variants. Useful for
-normalization. Accepts many boolean options:
+Takes an address string and returns a list of known variants. Useful for normalization. Accepts many boolean options:
 
   expand_address('120 E 96th St New York',
       latin_ascii => 1,
@@ -125,7 +124,7 @@ Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.
 
 This is useful if you are normalizing addresses in multiple languages.
 
-Finally C<expand_address> accepts an option for which address C<components> to expand. This a 16bit integer bitmask. These constants are exported with the C<:all> tag:
+Finally C<expand_address> accepts an option for which address C<components> to expand. This is a 16 bit integer bitmask. These constants are exported with the C<:all> tag:
 
   $ADDRESS_NONE
   $ADDRESS_ANY
@@ -197,12 +196,12 @@ C<expand_address> will C<die> on C<undef> and empty addresses, odd numbers of op
 
 Will C<die> on C<undef> and empty addresses. Exported on request.
 
-C<parse_address()> may return L<duplicate labels|https://github.com/openvenues/libpostal/issues/27> for invalid addresses
+C<parse_address> may return L<duplicate labels|https://github.com/openvenues/libpostal/issues/27> for invalid addresses
 strings.
 
 =head1 WARNING
 
-libpostal uses C<setup()> and C<teardown()> functions. Setup is lazily loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal> will C<die> if C<expand_address> or C<parse_address> is called after teardown.
+libpostal uses C<setup> and C<teardown> functions. Setup is lazily loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal> will C<die> if C<expand_address> or C<parse_address> is called after teardown. libpostal is not L<thread-safe|https://github.com/openvenues/libpostal/issues/34>.
 
 =head1 EXTERNAL DEPENDENCIES
 
