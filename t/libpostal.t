@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!perl
 use strict;
 use warnings;
 use utf8;
@@ -60,7 +60,7 @@ subtest expand_address => sub {
     transliterate => undef,
     strip_accents => undef,
     decompose => undef,
-    #lowercase => undef, segfault on older libpostals https://github.com/openvenues/libpostal/issues/79
+    lowercase => undef, # segfault on older libpostals https://github.com/openvenues/libpostal/issues/79
     trim_string => undef,
     drop_parentheticals => undef,
     replace_numeric_hyphens => undef,
@@ -208,8 +208,8 @@ subtest exceptions => sub {
 subtest teardown => sub {
   ok !defined Geo::libpostal::_teardown, '_teardown()';
   ok !defined Geo::libpostal::_teardown, '_teardown() twice doesn\'t error';
-  ok exception { parse_address('120 E 96th St New York') } , 'parse address dies after _teardown()';
-  ok exception { expand_address('120 E 96th St New York') }, 'expand address dies after _teardown()';
+  ok parse_address('120 E 96th St New York'),  'parse address works after _teardown()';
+  ok expand_address('120 E 96th St New York'), 'expand address works after _teardown()';
 };
 
 done_testing();

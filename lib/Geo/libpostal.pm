@@ -24,7 +24,7 @@ const our $ADDRESS_POSTAL_CODE  => 1 << 14;
 const our $ADDRESS_NEIGHBORHOOD => 1 << 15;
 const our $ADDRESS_ALL          => (1 << 16) - 1;
 
-our $VERSION     = '0.05';
+our $VERSION     = '0.06';
 our %EXPORT_TAGS = ( 'all' => [qw/
     expand_address
     parse_address
@@ -50,7 +50,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 XSLoader::load('Geo::libpostal', $VERSION);
 
 # cleanup libpostal
-END { _teardown() }
+#END { _teardown() }
 1;
 __END__
 =encoding utf8
@@ -116,7 +116,7 @@ Takes an address string and returns a list of known variants. Useful for normali
       roman_numerals => 1,
   );
 
-B<Warning>: old versions of libpostal L<segfault|https://github.com/openvenues/libpostal/issues/79> if all options are set to false.
+B<Warning>: old versions of libpostal L<segfault|https://github.com/openvenues/libpostal/issues/79> if all options are set to false. C<Geo::libpostal> includes a unit test for this.
 
 Also accepts an arrayref of language codes per L<ISO 639-1|https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>:
 
@@ -201,7 +201,23 @@ strings.
 
 =head1 WARNING
 
-libpostal uses C<setup> and C<teardown> functions. Setup is lazily loaded. Teardown occurs in an C<END> block automatically. C<Geo::libpostal> will C<die> if C<expand_address> or C<parse_address> is called after teardown. libpostal is not L<thread-safe|https://github.com/openvenues/libpostal/issues/34>.
+libpostal uses C<setup> and C<teardown> functions. Setup is lazily loaded. Teardown occurs in an C<END> block automatically.
+
+=over 4
+
+=item *
+
+Old versions of libpostal C<Geo::libpostal> will L<segfault|https://github.com/openvenues/libpostal/issues/82> if C<_teardown()> is called twice (this module includes a unit test for this).
+
+=item *
+
+If C<expand_address> or C<parse_address> is called after teardown, old versions of libpostal will L<error|https://github.com/openvenues/libpostal/pull/86> (this module includes a unit test for this too).
+
+=item *
+
+libpostal is not L<thread-safe|https://github.com/openvenues/libpostal/issues/34>.
+
+=back
 
 =head1 EXTERNAL DEPENDENCIES
 

@@ -3,34 +3,32 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "ppport.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <libpostal/libpostal.h>
 
-int LP_SETUP = 0,
-    LP_SETUP_LANGCLASS = 0,
-    LP_SETUP_PARSER = 0;
+short LP_SETUP = 0,
+      LP_SETUP_LANGCLASS = 0,
+      LP_SETUP_PARSER = 0;
 
-MODULE = Geo::libpostal      PACKAGE = Geo::libpostal PREFIX = lp_
+MODULE = Geo::libpostal PACKAGE = Geo::libpostal PREFIX = lp_
 PROTOTYPES: ENABLED
 
 void
 lp__teardown()
-  CODE:
-  /* if teardown is called twice, libpostal crashes */
-  if (LP_SETUP == 1) {
+  PPCODE:
+  if (LP_SETUP) {
     libpostal_teardown();
-    LP_SETUP = -1;
+    LP_SETUP = 0;
   }
-  if (LP_SETUP_LANGCLASS == 1) {
+  if (LP_SETUP_LANGCLASS) {
     libpostal_teardown_language_classifier();
-    LP_SETUP_LANGCLASS  = -1;
+    LP_SETUP_LANGCLASS  = 0;
   }
-  if (LP_SETUP_PARSER == 1) {
+  if (LP_SETUP_PARSER) {
     libpostal_teardown_parser();
-    LP_SETUP_PARSER  = -1;
+    LP_SETUP_PARSER  = 0;
   }
+  /* return undef */
   EXTEND(SP, 1);
   PUSHs(sv_newmortal());
 
@@ -44,15 +42,12 @@ lp_expand_address(address, ...)
     SV **lang;
     char **languages = NULL;
   PPCODE:
+    /* lazy load libpostal */
     if (!LP_SETUP) {
       if (!libpostal_setup()) {
         croak("libpostal_setup() failed");
       }
       LP_SETUP = 1;
-    }
-    /* if setup is called twice, libpostal crashes */
-    else if (LP_SETUP == -1) {
-      croak("_teardown() already called, Geo::libpostal cannot be used");
     }
 
     if (!LP_SETUP_LANGCLASS) {
@@ -214,14 +209,12 @@ lp_parse_address(address, ...)
     char *src, *option_name;
     size_t src_len, option_len, i, label_len, component_len;
   PPCODE:
+    /* lazy load libpostal */
     if (!LP_SETUP) {
       if (!libpostal_setup()) {
         croak("libpostal_setup() failed");
       }
       LP_SETUP = 1;
-    }
-    else if (LP_SETUP == -1) {
-      croak("_teardown() already called, Geo::libpostal cannot be used");
     }
 
     if (!LP_SETUP_PARSER) {
