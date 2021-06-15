@@ -24,7 +24,7 @@ const our $ADDRESS_POSTAL_CODE  => 1 << 14;
 const our $ADDRESS_NEIGHBORHOOD => 1 << 15;
 const our $ADDRESS_ALL          => (1 << 16) - 1;
 
-our $VERSION     = '0.07';
+our $VERSION     = '0.08';
 our %EXPORT_TAGS = ( 'all' => [qw/
     expand_address
     parse_address
