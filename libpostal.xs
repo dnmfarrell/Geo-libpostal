@@ -69,7 +69,7 @@ lp_expand_address(address, ...)
     /* copy the sv without the magic struct and populate src_len*/
     src = SvPV_nomg(address, src_len);
 
-    normalize_options_t options = get_libpostal_default_options();
+    libpostal_normalize_options_t options = libpostal_get_default_options();
 
     /* parse optional args */
     if (((items - 1) % 2) != 0)
@@ -182,7 +182,7 @@ lp_expand_address(address, ...)
         croak("Unrecognised parameter: '%"SVf"'", ST(i));
       }
     }
-    char **expansions = expand_address(src, options, &num_expansions);
+    char **expansions = libpostal_expand_address(src, options, &num_expansions);
 
     /* extend stack pointer with num of return values */
     EXTEND(SP, num_expansions);
@@ -200,7 +200,7 @@ lp_expand_address(address, ...)
       }
       free(languages);
     }
-    expansion_array_destroy(expansions, num_expansions);
+    libpostal_expansion_array_destroy(expansions, num_expansions);
 
 void
 lp_parse_address(address, ...)
@@ -236,7 +236,7 @@ lp_parse_address(address, ...)
     /* copy the sv without the magic struct and populate src_len*/
     src = SvPV_nomg(address, src_len);
 
-    address_parser_options_t options = get_libpostal_address_parser_default_options();
+    libpostal_address_parser_options_t options = libpostal_get_address_parser_default_options();
 
     /* parse optional args
      * N.B. These are ignored by libpostal
@@ -263,7 +263,7 @@ lp_parse_address(address, ...)
       }
     }
 
-    address_parser_response_t *parsed = parse_address(src, options);
+    libpostal_address_parser_response_t *parsed = libpostal_parse_address(src, options);
 
     /* extend stack pointer with num of return values */
     EXTEND(SP, parsed->num_components * 2);
@@ -277,4 +277,4 @@ lp_parse_address(address, ...)
     }
 
     /* Free parse result */
-    address_parser_response_destroy(parsed);
+    libpostal_address_parser_response_destroy(parsed);
